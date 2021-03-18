@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import Input from '../../components/UI/Input/Input';
 import Button from '../../components/UI/Button/Button';
 import Spinner from '../../components/UI/Spinner/Spinner';
+import { Redirect } from 'react-router-dom';
 import styles from './Auth.module.css';
 import * as actions from '../../store/actions/index';
 
@@ -122,14 +123,21 @@ class Auth extends Component {
 
         let errorMessage = null;
 
-        if(this.props.error) {
+        if (this.props.error) {
             errorMessage = (
                 <p className={styles.ErrorMessage}>{this.props.error.message.split('_').join(' ')}</p>
             );
         }
 
+        let authRedirect = null;
+
+        if (this.props.isAuthenticated) {
+            authRedirect = <Redirect to='/' />
+        }
+
         return (
             <div className={styles.Auth}>
+                {authRedirect}
                 {errorMessage}
                 <form onSubmit={this.submitHandler}>
                     {form}
@@ -147,7 +155,8 @@ class Auth extends Component {
 const mapStateToProps = state => {
     return {
         loading: state.auth.loading,
-        error : state.auth.error
+        error: state.auth.error,
+        isAuthenticated: state.auth.token !== null
     };
 };
 
